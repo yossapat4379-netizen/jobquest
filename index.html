@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Job Quest ผจญภัยโลกอาชีพ</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1e293b;--muted:#64748b;--ok:#16a34a;--bad:#dc2626;--card:#fff;--line:#e2e8f0;--pri:#4f46e5}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:'Kanit',system-ui,sans-serif;color:var(--ink);min-height:100vh;
+ background:linear-gradient(180deg,#bae6fd 0%,#e0f2fe 45%,#fef9c3 100%);}
+button{font-family:inherit;cursor:pointer;border:none}
+#app{max-width:980px;margin:0 auto;padding:16px 14px 40px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo .em{font-size:44px}
+.logo h1{margin:0;font-size:28px;line-height:1.1}
+.logo small{display:block;font-size:15px;color:var(--muted);font-weight:400}
+.btn{background:var(--pri);color:#fff;border-radius:14px;padding:10px 18px;font-size:18px;font-weight:500;box-shadow:0 4px 0 #3730a3}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #3730a3}
+.btn.ghost{background:#fff;color:var(--ink);box-shadow:0 4px 0 #cbd5e1}
+.btn.green{background:#16a34a;box-shadow:0 4px 0 #166534}
+.btn.orange{background:#f97316;box-shadow:0 4px 0 #c2410c}
+.btn.sm{font-size:15px;padding:7px 12px;border-radius:10px}
+.world{background:var(--card);border-radius:22px;padding:16px;margin-bottom:16px;box-shadow:0 6px 18px rgba(30,41,59,.08);border-top:8px solid var(--c)}
+.world.lock{opacity:.55;filter:grayscale(.7)}
+.whead{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.whead .wi{font-size:42px}
+.whead h2{margin:0;font-size:22px}
+.whead p{margin:0;color:var(--muted);font-size:15px}
+.whead .sp{flex:1}
+.stages{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:14px}
+.stage{background:#f8fafc;border:3px solid var(--line);border-radius:18px;padding:10px 6px;text-align:center;font-size:15px;color:var(--ink);min-height:118px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.stage .n{font-size:13px;color:var(--muted)}
+.stage .si{font-size:34px}
+.stage .st{font-size:18px;letter-spacing:2px;color:#f59e0b}
+.stage.open{border-color:var(--c);background:#fff}
+.stage.open:hover{transform:translateY(-2px)}
+.stage.locked{opacity:.5;cursor:not-allowed}
+.hud{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.hud .t{flex:1;font-size:18px;font-weight:600}
+.hearts{font-size:26px;letter-spacing:2px}
+.bar{height:14px;background:#fff;border-radius:99px;overflow:hidden;margin-bottom:14px;box-shadow:inset 0 0 0 2px var(--line)}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#22c55e,#84cc16);border-radius:99px;transition:width .4s}
+.panel{background:#fff;border-radius:24px;padding:20px;box-shadow:0 8px 24px rgba(30,41,59,.1);text-align:center}
+.ins{display:inline-flex;align-items:center;gap:8px;background:#eef2ff;color:#3730a3;border-radius:99px;padding:6px 16px;font-size:18px;margin-bottom:10px}
+.pic{position:relative;display:inline-flex;align-items:center;justify-content:center;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#fff,#e0f2fe);font-size:104px;line-height:1;margin:6px auto}
+.pic .tool{position:absolute;right:-4px;bottom:4px;font-size:46px;background:#fff;border-radius:50%;width:66px;height:66px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,.15)}
+.pic.sm{width:110px;height:110px;font-size:66px}
+.pic.sm .tool{width:44px;height:44px;font-size:28px;right:-6px;bottom:0}
+.word{font-size:46px;font-weight:700;letter-spacing:1px;margin:6px 0}
+.th{font-size:22px;color:var(--muted)}
+.opts{display:grid;gap:12px;margin-top:16px}
+.opts.c3{grid-template-columns:repeat(3,1fr)}
+.opt{background:#fff;border:4px solid var(--line);border-radius:20px;padding:14px 8px;font-size:26px;font-weight:600;color:var(--ink);box-shadow:0 5px 0 var(--line);transition:transform .1s}
+.opt:hover{border-color:#a5b4fc}
+.opt:active{transform:translateY(3px)}
+.opt.right{border-color:var(--ok);background:#dcfce7;box-shadow:0 5px 0 #86efac}
+.opt.wrong{border-color:var(--bad);background:#fee2e2;box-shadow:0 5px 0 #fca5a5}
+.opt .mini{display:block;font-size:17px;font-weight:400;color:var(--muted)}
+.opt.picopt{padding:10px 4px}
+.letter{font-size:44px;text-transform:lowercase}
+.mask{font-size:46px;font-weight:700;letter-spacing:6px;margin:8px 0}
+.mask b{color:var(--pri);border-bottom:5px solid var(--pri);padding:0 6px}
+.slots{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:14px 0}
+.slot{width:46px;height:56px;border-radius:12px;background:#f1f5f9;border:3px dashed #94a3b8;font-size:32px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.slot.f{background:#dcfce7;border:3px solid var(--ok)}
+.slot.gap{width:20px;background:none;border:none}
+.tiles{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.tile{width:58px;height:62px;border-radius:14px;background:#fde68a;box-shadow:0 5px 0 #f59e0b;font-size:32px;font-weight:700;color:var(--ink)}
+.tile.used{visibility:hidden}
+.sentence{font-size:28px;font-weight:500;line-height:1.5;background:#fffbeb;border:3px solid #fde68a;border-radius:18px;padding:14px 18px;margin:8px auto;max-width:640px}
+.hint{margin-top:14px}
+.hintbox{margin-top:10px;font-size:20px;color:#92400e;background:#fef3c7;border-radius:12px;padding:8px 14px;display:inline-block}
+.shake{animation:sh .4s}
+@keyframes sh{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+.pop{animation:pop .35s}
+@keyframes pop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+.ov{position:fixed;inset:0;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+.fb{background:#fff;border-radius:28px;padding:22px 26px;max-width:440px;width:100%;text-align:center;border:8px solid var(--ok)}
+.fb.bad{border-color:var(--bad)}
+.fb .big{font-size:40px;font-weight:700}
+.fb.good .big{color:var(--ok)}
+.fb.bad .big{color:var(--bad)}
+.learn .nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:8px}
+.dots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.dots i{width:12px;height:12px;border-radius:50%;background:#cbd5e1}
+.dots i.on{background:var(--pri)}
+.spellrow{display:flex;justify-content:center;gap:5px;flex-wrap:wrap;margin:8px 0}
+.spellrow span{min-width:40px;height:48px;border-radius:10px;background:#eef2ff;color:#3730a3;font-size:28px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.spellrow span.gap{background:none;min-width:14px}
+.result .stars{font-size:64px;letter-spacing:6px;margin:6px 0}
+.result .stars .off{filter:grayscale(1);opacity:.3}
+.review{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0}
+.review span{background:#fee2e2;border-radius:12px;padding:6px 12px;font-size:18px}
+.row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.guide{background:#fff;border-radius:22px;padding:20px 24px;max-width:640px;max-height:86vh;overflow:auto;text-align:left;font-size:17px;line-height:1.6}
+.guide h3{margin:12px 0 4px}
+.guide ul{margin:4px 0;padding-left:22px}
+.conf{position:fixed;top:-60px;font-size:34px;pointer-events:none;animation:fall linear forwards;z-index:30}
+@keyframes fall{to{transform:translateY(115vh) rotate(540deg)}}
+.foot{text-align:center;color:var(--muted);font-size:14px;margin-top:20px}
+@media (max-width:640px){
+ .stages{grid-template-columns:repeat(3,1fr)}
+ .word,.mask{font-size:36px}
+ .opt{font-size:20px}
+ .pic{width:140px;height:140px;font-size:84px}
+ .sentence{font-size:22px}
+ .slot{width:36px;height:46px;font-size:26px}
+ .tile{width:48px;height:54px;font-size:28px}
+ .opts.c3.words{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="ov"></div>
+<script>
+// ---------------- คลังคำศัพท์ ----------------
+const WORLDS=[
+ {title:'อาชีพในชุมชน',sub:'Jobs in my community',icon:'🏘️',c:'#22c55e',words:[
+  {en:'doctor',th:'หมอ / แพทย์',pic:'👨‍⚕️',tool:'🩺',s:'I work in a hospital. I help sick people.',st:'ฉันทำงานที่โรงพยาบาล ฉันช่วยคนป่วย'},
+  {en:'nurse',th:'พยาบาล',pic:'👩‍⚕️',tool:'💉',s:'I work in a hospital. I take care of patients.',st:'ฉันทำงานที่โรงพยาบาล ฉันดูแลผู้ป่วย'},
+  {en:'teacher',th:'ครู',pic:'🧑‍🏫',tool:'📚',s:'I work in a school. I teach students.',st:'ฉันทำงานที่โรงเรียน ฉันสอนนักเรียน'},
+  {en:'police officer',th:'ตำรวจ',pic:'👮',tool:'🚓',s:'I work at a police station. I catch thieves.',st:'ฉันทำงานที่สถานีตำรวจ ฉันจับขโมย'},
+  {en:'farmer',th:'เกษตรกร / ชาวนา',pic:'🧑‍🌾',tool:'🌾',s:'I work on a farm. I grow rice and vegetables.',st:'ฉันทำงานในไร่นา ฉันปลูกข้าวและผัก'},
+  {en:'cook',th:'พ่อครัว / แม่ครัว',pic:'🧑‍🍳',tool:'🍳',s:'I work in a kitchen. I cook food.',st:'ฉันทำงานในครัว ฉันทำอาหาร'},
+  {en:'driver',th:'คนขับรถ',pic:'🚕',tool:'🔑',s:'I drive a taxi or a bus.',st:'ฉันขับรถแท็กซี่หรือรถโดยสาร'},
+  {en:'postman',th:'บุรุษไปรษณีย์',pic:'📮',tool:'✉️',s:'I bring letters to your house.',st:'ฉันนำจดหมายมาส่งที่บ้านของคุณ'}]},
+ {title:'ช่างและงานบริการ',sub:'Workers and services',icon:'🛠️',c:'#f97316',words:[
+  {en:'firefighter',th:'นักดับเพลิง',pic:'🧑‍🚒',tool:'🔥',s:'I put out fires. I drive a fire truck.',st:'ฉันดับไฟ ฉันขับรถดับเพลิง'},
+  {en:'mechanic',th:'ช่างซ่อมรถ',pic:'🧑‍🔧',tool:'🚗',s:'I work in a garage. I fix cars.',st:'ฉันทำงานที่อู่ ฉันซ่อมรถยนต์'},
+  {en:'builder',th:'ช่างก่อสร้าง',pic:'👷',tool:'🧱',s:'I build houses and buildings.',st:'ฉันสร้างบ้านและอาคาร'},
+  {en:'hairdresser',th:'ช่างทำผม',pic:'💇',tool:'✂️',s:'I cut and wash hair.',st:'ฉันตัดผมและสระผม'},
+  {en:'dentist',th:'ทันตแพทย์ / หมอฟัน',pic:'🦷',tool:'🪥',s:'I check and clean your teeth.',st:'ฉันตรวจและทำความสะอาดฟันของคุณ'},
+  {en:'vet',th:'สัตวแพทย์ / หมอรักษาสัตว์',pic:'🐶',tool:'🩺',s:'I take care of sick animals.',st:'ฉันดูแลสัตว์ที่ป่วย'},
+  {en:'fisherman',th:'ชาวประมง',pic:'🎣',tool:'🐟',s:'I catch fish in the sea.',st:'ฉันจับปลาในทะเล'},
+  {en:'soldier',th:'ทหาร',pic:'🪖',tool:'🛡️',s:'I protect my country.',st:'ฉันปกป้องประเทศของฉัน'}]},
+ {title:'อาชีพในฝัน',sub:'Dream jobs',icon:'🚀',c:'#8b5cf6',words:[
+  {en:'pilot',th:'นักบิน',pic:'🧑‍✈️',tool:'✈️',s:'I fly airplanes.',st:'ฉันขับเครื่องบิน'},
+  {en:'astronaut',th:'นักบินอวกาศ',pic:'🧑‍🚀',tool:'🚀',s:'I go to space in a rocket.',st:'ฉันไปอวกาศด้วยจรวด'},
+  {en:'scientist',th:'นักวิทยาศาสตร์',pic:'🧑‍🔬',tool:'🧪',s:'I work in a laboratory. I do experiments.',st:'ฉันทำงานในห้องทดลอง ฉันทำการทดลอง'},
+  {en:'programmer',th:'โปรแกรมเมอร์',pic:'🧑‍💻',tool:'⌨️',s:'I write programs on a computer.',st:'ฉันเขียนโปรแกรมบนคอมพิวเตอร์'},
+  {en:'artist',th:'ศิลปิน / จิตรกร',pic:'🧑‍🎨',tool:'🎨',s:'I paint beautiful pictures.',st:'ฉันวาดภาพที่สวยงาม'},
+  {en:'singer',th:'นักร้อง',pic:'🧑‍🎤',tool:'🎤',s:'I sing songs on stage.',st:'ฉันร้องเพลงบนเวที'},
+  {en:'judge',th:'ผู้พิพากษา',pic:'🧑‍⚖️',tool:'⚖️',s:'I work in a court.',st:'ฉันทำงานที่ศาล'},
+  {en:'office worker',th:'พนักงานบริษัท',pic:'🧑‍💼',tool:'🏢',s:'I work in an office.',st:'ฉันทำงานในสำนักงาน'}]}
+];
+const STAGES=[
+ {name:'ดูภาพ เลือกคำ',icon:'🖼️',ins:'👀 ดูภาพ แล้วเลือกคำที่ถูกต้อง'},
+ {name:'อ่านคำ เลือกภาพ',icon:'🔤',ins:'📖 อ่านคำ แล้วเลือกภาพที่ถูกต้อง'},
+ {name:'เติมตัวอักษร',icon:'🧩',ins:'🧩 เลือกตัวอักษรที่หายไป'},
+ {name:'สะกดคำ',icon:'✍️',ins:'✍️ แตะตัวอักษรเรียงให้เป็นคำ'},
+ {name:'ฉันคือใคร?',icon:'🕵️',ins:'🕵️ อ่านประโยค แล้วทายว่าเป็นอาชีพอะไร'}
+];
+
+// ---------------- ความคืบหน้า ----------------
+const KEY='jobquest_v1';
+let P={stars:WORLDS.map(()=>[0,0,0,0,0]),teacher:false};
+try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.stars)P=d}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(P))}catch(e){}}
+const worldOpen=w=>P.teacher||w===0||P.stars[w-1][4]>0;
+const stageOpen=(w,s)=>worldOpen(w)&&(P.teacher||s===0||P.stars[w][s-1]>0);
+
+// ---------------- เครื่องมือ ----------------
+const $=s=>document.querySelector(s);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const pic=(w,cls='')=>`<div class="pic ${cls}">${w.pic}<span class="tool">${w.tool}</span></div>`;
+const ABC='abcdefghijklmnopqrstuvwxyz';
+function others(word,pool,n){return shuffle(pool.filter(x=>x!==word)).slice(0,n)}
+function confetti(n=30){const em=['🎉','⭐','✨','🎊','💛'];for(let i=0;i<n;i++){const e=document.createElement('div');e.className='conf';e.textContent=em[i%em.length];e.style.left=Math.random()*100+'vw';e.style.animationDuration=(1.8+Math.random()*1.8)+'s';e.style.animationDelay=Math.random()*.6+'s';document.body.appendChild(e);setTimeout(()=>e.remove(),4500)}}
+
+// ---------------- หน้าแผนที่ ----------------
+function home(){
+ $('#ov').innerHTML='';
+ let h=`<div class="top"><div class="logo"><span class="em">🧭</span><h1>Job Quest<small>ผจญภัยโลกอาชีพ · คำศัพท์ภาษาอังกฤษหมวดอาชีพ</small></h1></div>
+ <div class="row" style="margin:0"><button class="btn ghost sm" onclick="guide()">📘 คู่มือครู</button></div></div>`;
+ WORLDS.forEach((W,w)=>{
+  const open=worldOpen(w);const tot=P.stars[w].reduce((a,b)=>a+b,0);
+  h+=`<div class="world ${open?'':'lock'}" style="--c:${W.c}"><div class="whead"><span class="wi">${open?W.icon:'🔒'}</span>
+  <div><h2>โลกที่ ${w+1} : ${W.title}</h2><p>${W.sub} · ${W.words.length} คำ · ⭐ ${tot}/15</p></div><span class="sp"></span>
+  ${open?`<button class="btn green sm" onclick="learn(${w},0)">📖 เรียนรู้คำศัพท์</button>`:'<p>ผ่านด่าน 5 ของโลกก่อนหน้าเพื่อปลดล็อก</p>'}</div>
+  <div class="stages">`+STAGES.map((S,s)=>{const o=stageOpen(w,s),st=P.stars[w][s];
+   return `<button class="stage ${o?'open':'locked'}" ${o?`onclick="start(${w},${s})"`:''}><span class="n">ด่าน ${s+1}</span><span class="si">${o?S.icon:'🔒'}</span>${S.name}<span class="st">${'★'.repeat(st)}${'☆'.repeat(3-st)}</span></button>`}).join('')+`</div></div>`;
+ });
+ h+=`<div class="foot">💡 เคล็ดลับ: เริ่มจาก “📖 เรียนรู้คำศัพท์” ก่อนเล่นด่าน 1 · ตอบผิดได้ 3 ครั้งต่อด่าน (❤️)</div>`;
+ $('#app').innerHTML=h;window.scrollTo(0,0);
+}
+
+// ---------------- โหมดเรียนรู้ ----------------
+function spellRow(en){return `<div class="spellrow">${[...en].map(c=>c===' '?'<span class="gap"></span>':`<span>${c}</span>`).join('')}</div>`}
+function learn(w,i){
+ const W=WORLDS[w],x=W.words[i];
+ $('#app').innerHTML=`<div class="hud"><button class="btn ghost sm" onclick="home()">🗺️ แผนที่</button><div class="t">📖 เรียนรู้ · ${W.title}</div><div>${i+1} / ${W.words.length}</div></div>
+ <div class="panel learn pop">
+  ${pic(x)}
+  <div class="word">${x.en}</div>
+  <div class="th">${x.th}</div>
+  ${spellRow(x.en)}
+  <div class="sentence">${x.s}<div class="th" style="font-size:18px;margin-top:4px">${x.st}</div></div>
+  <div class="nav"><button class="btn ghost" ${i===0?'disabled style="opacity:.4"':''} onclick="learn(${w},${i-1})">◀ ก่อนหน้า</button>
+  <div class="dots">${W.words.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('')}</div>
+  ${i<W.words.length-1?`<button class="btn" onclick="learn(${w},${i+1})">ถัดไป ▶</button>`:`<button class="btn orange" onclick="start(${w},0)">เริ่มด่าน 1 🎮</button>`}</div>
+ </div>`;
+}
+
+// ---------------- เล่นเกม ----------------
+let G=null;
+function start(w,s){
+ if(!stageOpen(w,s))return;
+ G={w,s,qs:shuffle(WORLDS[w].words),i:0,hearts:3,wrong:[],busy:false,miss:false};
+ render();
+}
+function hud(){
+ const W=WORLDS[G.w],S=STAGES[G.s];
+ return `<div class="hud"><button class="btn ghost sm" onclick="home()">🗺️ แผนที่</button><div class="t">${S.icon} ด่าน ${G.s+1} · ${S.name}</div><div class="hearts">${'❤️'.repeat(G.hearts)}${'🤍'.repeat(3-G.hearts)}</div></div>
+ <div class="bar"><i style="width:${G.i/G.qs.length*100}%"></i></div>`;
+}
+function hintBtn(x){return `<div class="hint"><button class="btn ghost sm" onclick="this.outerHTML='<div class=hintbox>💡 ${x.th}</div>'">💡 คำใบ้ (ภาษาไทย)</button></div>`}
+function render(){
+ G.busy=false;G.miss=false;
+ const W=WORLDS[G.w],x=G.qs[G.i],pool=W.words;let body='';
+ const ins=`<div class="ins">${STAGES[G.s].ins}</div>`;
+ if(G.s===0){
+  G.opts=shuffle([x,...others(x,pool,2)]);
+  body=`${ins}<div>${pic(x)}</div>${hintBtn(x)}<div class="opts c3 words">${G.opts.map((o,k)=>`<button class="opt" onclick="choose(${k},this)">${o.en}</button>`).join('')}</div>`;
+ }else if(G.s===1){
+  G.opts=shuffle([x,...others(x,pool,2)]);
+  body=`${ins}<div class="word">${x.en}</div>${hintBtn(x)}<div class="opts c3">${G.opts.map((o,k)=>`<button class="opt picopt" onclick="choose(${k},this)">${pic(o,'sm')}</button>`).join('')}</div>`;
+ }else if(G.s===2){
+  const idx=[...x.en].map((c,k)=>c===' '?-1:k).filter(k=>k>=0);
+  const m=idx[Math.floor(Math.random()*idx.length)];const ans=x.en[m];
+  const wrongs=shuffle([...ABC].filter(c=>c!==ans)).slice(0,2);
+  G.opts=shuffle([ans,...wrongs]);G.ans=ans;
+  const masked=[...x.en].map((c,k)=>k===m?'<b>?</b>':(c===' '?'&nbsp;':c)).join('');
+  body=`${ins}<div>${pic(x,'sm')}</div><div class="mask">${masked}</div><div class="th">${x.th}</div><div class="opts c3">${G.opts.map((o,k)=>`<button class="opt letter" onclick="chooseL(${k},this)">${o}</button>`).join('')}</div>`;
+ }else if(G.s===3){
+  G.target=[...x.en].filter(c=>c!==' ');G.pos=0;
+  const extra=shuffle([...ABC].filter(c=>!G.target.includes(c))).slice(0,2);
+  G.tiles=shuffle([...G.target,...extra]);
+  body=`${ins}<div>${pic(x,'sm')}</div><div class="th" style="margin-top:4px">${x.th}</div><div class="slots" id="slots"></div><div class="tiles">${G.tiles.map((t,k)=>`<button class="tile" id="t${k}" onclick="tap(${k})">${t}</button>`).join('')}</div>`;
+ }else{
+  G.opts=shuffle([x,...others(x,pool,2)]);
+  body=`${ins}<div class="sentence">${x.s}</div><div style="font-size:30px;font-weight:600;margin-top:6px">Who am I? 🤔</div>
+  <div class="hint"><button class="btn ghost sm" onclick="this.outerHTML='<div class=hintbox>💡 ${x.st}</div>'">💡 คำใบ้ (แปลประโยค)</button></div>
+  <div class="opts c3">${G.opts.map((o,k)=>`<button class="opt picopt" onclick="choose(${k},this)">${pic(o,'sm')}<span class="mini" style="font-size:20px;color:var(--ink);font-weight:600">${o.en}</span></button>`).join('')}</div>`;
+ }
+ $('#app').innerHTML=hud()+`<div class="panel pop">${body}</div>`;
+ if(G.s===3)drawSlots();
+}
+function choose(k,el){
+ if(G.busy)return;G.busy=true;
+ const x=G.qs[G.i],ok=G.opts[k]===x;
+ mark(el,ok,G.opts.indexOf(x));
+ feedback(ok);
+}
+function chooseL(k,el){
+ if(G.busy)return;G.busy=true;
+ const ok=G.opts[k]===G.ans;
+ mark(el,ok,G.opts.indexOf(G.ans));
+ feedback(ok);
+}
+function mark(el,ok,ri){
+ const bs=document.querySelectorAll('.opt');
+ if(ok)el.classList.add('right');else{el.classList.add('wrong','shake');bs[ri].classList.add('right')}
+}
+function drawSlots(){
+ const x=G.qs[G.i];let n=0;
+ $('#slots').innerHTML=[...x.en].map(c=>{if(c===' ')return '<div class="slot gap"></div>';const f=n<G.pos;const r=`<div class="slot ${f?'f':''}">${f?c:''}</div>`;n++;return r}).join('');
+}
+function tap(k){
+ if(G.busy)return;
+ const el=$('#t'+k);
+ if(G.tiles[k]===G.target[G.pos]){
+  el.classList.add('used');G.pos++;drawSlots();
+  if(G.pos===G.target.length){G.busy=true;feedback(!G.miss,true)}
+ }else{
+  el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');
+  if(!G.miss){G.miss=true;loseHeart();
+   document.querySelector('.hearts').innerHTML='❤️'.repeat(G.hearts)+'🤍'.repeat(3-G.hearts);
+   if(G.hearts<=0){G.busy=true;setTimeout(gameOver,700)}}
+ }
+}
+function loseHeart(){G.hearts--;const x=G.qs[G.i];if(!G.wrong.includes(x))G.wrong.push(x)}
+function feedback(ok,spelled){
+ const x=G.qs[G.i];
+ if(!ok&&!spelled)loseHeart();
+ const good=ok||spelled;
+ const msg=ok?['เก่งมาก! 🎉','ถูกต้อง! 👍','สุดยอด! ⭐','Great job! 🌟'][Math.floor(Math.random()*4)]:(spelled?'สะกดครบแล้ว! ✍️':'ยังไม่ถูกนะ 😅');
+ $('#ov').innerHTML=`<div class="ov" onclick="${good?'next()':''}"><div class="fb ${good?'good':'bad'} pop" onclick="event.stopPropagation()">
+  <div class="big">${good?'✔':'✘'} ${msg}</div>
+  ${!good?'<div class="th" style="margin-top:6px">คำตอบที่ถูกคือ</div>':''}
+  ${pic(x,'sm')}<div class="word" style="font-size:36px">${x.en}</div><div class="th">${x.th}</div>
+  ${spellRow(x.en)}
+  <div class="row"><button class="btn ${good?'green':''}" onclick="next()">ต่อไป ▶</button></div></div></div>`;
+ if(good&&ok)G.auto=setTimeout(next,1800);
+}
+function next(){
+ clearTimeout(G.auto);$('#ov').innerHTML='';
+ if(G.hearts<=0)return gameOver();
+ G.i++;
+ if(G.i>=G.qs.length)return result();
+ render();
+}
+function gameOver(){
+ $('#ov').innerHTML='';
+ $('#app').innerHTML=hud()+`<div class="panel result pop"><div style="font-size:80px">💔</div><h2 style="font-size:32px;margin:4px 0">หัวใจหมดแล้ว!</h2>
+ <div class="th">ไม่เป็นไร ทบทวนคำศัพท์แล้วลองใหม่นะ 💪</div>
+ ${G.wrong.length?`<div class="review">${G.wrong.map(x=>`<span>${x.pic} ${x.en} = ${x.th}</span>`).join('')}</div>`:''}
+ <div class="row"><button class="btn orange" onclick="start(${G.w},${G.s})">🔄 เล่นอีกครั้ง</button><button class="btn green" onclick="learn(${G.w},0)">📖 ทบทวนคำศัพท์</button><button class="btn ghost" onclick="home()">🗺️ แผนที่</button></div></div>`;
+}
+function result(){
+ const st=G.hearts;const {w,s}=G;
+ if(st>P.stars[w][s])P.stars[w][s]=st;save();
+ confetti(st*12);
+ const nextS=s<4?[w,s+1]:(w<WORLDS.length-1?[w+1,0]:null);
+ const nm=st===3?'ยอดเยี่ยม! ไม่ผิดเลย':st===2?'เก่งมาก!':'ผ่านแล้ว! ฝึกอีกนิดนะ';
+ $('#app').innerHTML=`<div class="panel result pop"><div style="font-size:24px;color:var(--muted)">ด่าน ${s+1} · ${STAGES[s].name}</div>
+ <div class="stars">${[0,1,2].map(k=>`<span class="${k<st?'':'off'}">⭐</span>`).join('')}</div>
+ <h2 style="font-size:34px;margin:0">${nm}</h2>
+ <div class="th">ตอบถูก ${G.qs.length-G.wrong.length} จาก ${G.qs.length} คำ</div>
+ ${G.wrong.length?`<div style="margin-top:12px;font-weight:600">📝 คำที่ควรทบทวน</div><div class="review">${G.wrong.map(x=>`<span>${x.pic} ${x.en} = ${x.th}</span>`).join('')}</div>`:''}
+ ${s===4&&w<WORLDS.length-1?`<div class="hintbox" style="margin-top:12px">🔓 ปลดล็อกโลกที่ ${w+2} : ${WORLDS[w+1].title} แล้ว!</div>`:''}
+ ${s===4&&w===WORLDS.length-1?`<div class="hintbox" style="margin-top:12px">🏆 ยินดีด้วย! ผ่านครบทุกโลกแล้ว</div>`:''}
+ <div class="row"><button class="btn ghost" onclick="start(${w},${s})">🔄 เล่นอีกครั้ง</button>
+ ${nextS?(nextS[1]===0?`<button class="btn green" onclick="learn(${nextS[0]},0)">📖 ไปโลกถัดไป</button>`:`<button class="btn green" onclick="start(${nextS[0]},${nextS[1]})">ด่านต่อไป ▶</button>`):''}
+ <button class="btn ghost" onclick="home()">🗺️ แผนที่</button></div></div>`;
+}
+
+// ---------------- คู่มือครู ----------------
+function guide(){
+ $('#ov').innerHTML=`<div class="ov" onclick="$('#ov').innerHTML=''"><div class="guide pop" onclick="event.stopPropagation()">
+ <h2 style="margin-top:0">📘 คู่มือครู : Job Quest</h2>
+ <h3>🎯 จุดประสงค์การเรียนรู้</h3><ul>
+ <li>นักเรียนบอกความหมายคำศัพท์หมวดอาชีพ (Occupations) ได้จากภาพ</li>
+ <li>นักเรียนอ่านและสะกดคำศัพท์อาชีพได้ถูกต้อง</li>
+ <li>นักเรียนอ่านประโยคบอกลักษณะงาน (I work in… / I help…) แล้วระบุอาชีพได้</li></ul>
+ <h3>🗺️ โครงสร้างเกม (3 โลก × 5 ด่าน = 24 คำ)</h3><ul>
+ <li>ด่าน 1 ดูภาพ→เลือกคำ · ด่าน 2 อ่านคำ→เลือกภาพ (รู้จำคำ)</li>
+ <li>ด่าน 3 เติมตัวอักษร · ด่าน 4 สะกดคำ (เขียน/สะกด)</li>
+ <li>ด่าน 5 ฉันคือใคร? อ่านประโยคทายอาชีพ (อ่านเข้าใจ)</li>
+ <li>มีหัวใจ 3 ดวงต่อด่าน ได้ดาวตามหัวใจที่เหลือ ต้องได้อย่างน้อย 1 ดาวจึงปลดล็อกด่านต่อไป</li></ul>
+ <h3>🤟 การออกแบบสำหรับนักเรียนบกพร่องทางการได้ยิน</h3><ul>
+ <li>ไม่ใช้เสียงเลย ทุกคำสั่งและผลตอบรับเป็นภาพ สี สัญลักษณ์ และข้อความสั้น</li>
+ <li>ตอบผิดจะแสดงคำตอบที่ถูกค้างไว้จนกดต่อไป ให้เวลาดูและจดจำ</li>
+ <li>แยกตัวอักษรเป็นช่อง ใช้ฝึกสะกดนิ้วมือ (Fingerspelling) ควบคู่ได้</li>
+ <li>ไม่มีการจับเวลา นักเรียนทำตามจังหวะของตนเอง มีคำใบ้ภาษาไทย</li></ul>
+ <h3>👩‍🏫 ข้อเสนอแนะการใช้</h3><ul>
+ <li>ครูสอนท่าภาษามือไทยของแต่ละอาชีพในโหมด “เรียนรู้” ก่อนเล่น</li>
+ <li>ใช้บนแท็บเล็ต/โปรเจกเตอร์ เล่นเดี่ยวหรือแข่งเป็นทีม</li>
+ <li>ให้นักเรียนจดคำใน “คำที่ควรทบทวน” ลงสมุดคำศัพท์</li></ul>
+ <h3>⚙️ สำหรับครู</h3>
+ <div class="row" style="justify-content:flex-start">
+ <button class="btn sm ${P.teacher?'orange':'ghost'}" onclick="P.teacher=!P.teacher;save();guide();home();guide()">${P.teacher?'🔓 โหมดครู: เปิด (ทุกด่านปลดล็อก)':'🔒 เปิดโหมดครู (ปลดล็อกทุกด่าน)'}</button>
+ <button class="btn sm ghost" onclick="P={stars:WORLDS.map(()=>[0,0,0,0,0]),teacher:false};save();home();guide()">🧹 ล้างคะแนนทั้งหมด</button></div>
+ <div class="row"><button class="btn" onclick="$('#ov').innerHTML=''">ปิด</button></div>
+ </div></div>`;
+}
+home();
+</script>
+</body>
+</html>
